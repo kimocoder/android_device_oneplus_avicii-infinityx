@@ -1,6 +1,9 @@
 # Audio
 af.fast_track_multiplier=1
 
+# Disable Skia tracing by default
+debug.hwui.skia_atrace_enabled=false
+
 # GMS
 ro.opa.device_model_id=ga-oplus-skill-os121-211011
 
