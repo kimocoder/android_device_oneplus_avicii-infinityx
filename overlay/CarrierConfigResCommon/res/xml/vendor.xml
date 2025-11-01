@@ -4349,6 +4349,14 @@
         <boolean name="carrier_supports_ss_over_ut_bool" value="true" />
         <boolean name="editable_wfc_roaming_mode_bool" value="true" />
         <boolean name="oplus_support_video_cf_bool" value="true" />
+        <int name="config_oplus_5g_pref_default" value="1" />
+        <boolean name="carrier_config_vonr_state" value="false" />
+        <boolean name="carrier_config_vonr_visible" value="true" />
+        <boolean name="wfc_disable_nrsa_config" value="true" />
+        <int-array name="carrier_nr_availabilities_int_array" num="2">
+            	<item value="1" />
+                <item value="2" />
+        </int-array>
         <boolean name="config_oplus_show_video_call_forward" value="true" />
         <boolean name="carrier_allow_transfer_ims_call_bool" value="false" />
         <string-array name="mccmnc" num="24">
