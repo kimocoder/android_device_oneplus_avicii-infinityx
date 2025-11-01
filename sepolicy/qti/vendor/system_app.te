@@ -2,3 +2,7 @@ allow system_app sysfs_leds:dir search;
 
 hal_client_domain(system_app, hal_telephony)
 binder_call(system_app, rild)
+
+# Allow system_app to access HBM node
+allow system_app vendor_sysfs_graphics:dir search;
+allow system_app vendor_sysfs_graphics:file rw_file_perms;
