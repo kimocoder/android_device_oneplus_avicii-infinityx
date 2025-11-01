@@ -376,4 +376,7 @@
         <item>102</item>   <!-- <item>sensorRadius</item> -->
     </integer-array>
 
+    <!-- Fingerprint from stock ROM -->
+    <string name="config_stockFingerprint" translatable="false">OnePlus/Nord/Nord:12/RKQ1.211119.001/Q.202212051830:user/release-keys</string>
+
 </resources>
