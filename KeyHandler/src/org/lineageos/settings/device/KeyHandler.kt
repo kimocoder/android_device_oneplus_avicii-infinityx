@@ -15,6 +15,7 @@ import android.media.AudioSystem
 import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.UserHandle
 import android.provider.Settings
 import android.view.KeyEvent
 import com.android.internal.os.DeviceKeyHandler
@@ -22,7 +23,7 @@ import com.android.internal.os.DeviceKeyHandler
 import java.io.File
 import java.util.concurrent.Executors
 
-class KeyHandler(context: Context) : DeviceKeyHandler {
+class KeyHandler(private val context: Context) : DeviceKeyHandler {
     private val audioManager = context.getSystemService(AudioManager::class.java)!!
     private val notificationManager = context.getSystemService(NotificationManager::class.java)!!
     private val vibrator = context.getSystemService(Vibrator::class.java)!!
@@ -84,11 +85,47 @@ class KeyHandler(context: Context) : DeviceKeyHandler {
     }
 
     private fun populateKeyState(vibrate: Boolean) {
-        when (File("/proc/tristatekey/tri_state").readText().trim()) {
-            "1" -> handleMode(POSITION_TOP, vibrate)
-            "2" -> handleMode(POSITION_MIDDLE, vibrate)
-            "3" -> handleMode(POSITION_BOTTOM, vibrate)
+        val position = when (File("/proc/tristatekey/tri_state").readText().trim()) {
+            "1" -> POSITION_TOP
+            "2" -> POSITION_MIDDLE
+            "3" -> POSITION_BOTTOM
+            else -> return
         }
+        
+        handleMode(position, vibrate)
+    }
+
+    private fun broadcastSliderPosition(position: Int, mode: Int) {
+        val positionValue = when (mode) {
+            AudioManager.RINGER_MODE_SILENT -> MODE_SILENT      // 0 -> 620
+            AudioManager.RINGER_MODE_VIBRATE -> MODE_VIBRATE    // 1 -> 604
+            AudioManager.RINGER_MODE_NORMAL -> MODE_RING        // 2 -> 605
+            ZEN_PRIORITY_ONLY -> MODE_PRIORITY_ONLY             // 3 -> 602
+            ZEN_TOTAL_SILENCE -> MODE_TOTAL_SILENCE             // 4 -> 600
+            ZEN_ALARMS_ONLY -> MODE_ALARMS_ONLY                 // 5 -> 601
+            else -> {
+                android.util.Log.e(TAG, "Unknown mode: $mode, defaulting to MODE_SILENT")
+                MODE_SILENT
+            }
+        }
+        
+        val broadcastPosition = position - 1
+        
+        android.util.Log.d(TAG, "=== SLIDER BROADCAST ===")
+        android.util.Log.d(TAG, "Physical position: $position")
+        android.util.Log.d(TAG, "Broadcast position: $broadcastPosition")
+        android.util.Log.d(TAG, "AudioManager mode: $mode")
+        android.util.Log.d(TAG, "NordLab positionValue: $positionValue")
+        android.util.Log.d(TAG, "Action: $ACTION_UPDATE_SLIDER_POSITION")
+        
+        val intent = Intent(ACTION_UPDATE_SLIDER_POSITION).apply {
+            putExtra(EXTRA_SLIDER_POSITION, broadcastPosition)
+            putExtra(EXTRA_SLIDER_POSITION_VALUE, positionValue)
+            addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY)
+        }
+        context.sendBroadcast(intent)
+        
+        android.util.Log.d(TAG, "Broadcast sent successfully")
     }
 
     private fun vibrateIfNeeded(mode: Int) {
@@ -113,6 +150,8 @@ class KeyHandler(context: Context) : DeviceKeyHandler {
             POSITION_BOTTOM -> sharedPreferences.getString(ALERT_SLIDER_BOTTOM_KEY, "2")!!.toInt()
             else -> return
         }
+
+        broadcastSliderPosition(position, mode)
 
         executorService.submit {
             when (mode) {
@@ -159,10 +198,25 @@ class KeyHandler(context: Context) : DeviceKeyHandler {
     companion object {
         private const val TAG = "KeyHandler"
 
+        // Broadcast action for slider position updates
+        const val ACTION_UPDATE_SLIDER_POSITION = "org.lineageos.settings.device.UPDATE_SLIDER_POSITION"
+        
         // Slider key positions
-        private const val POSITION_TOP = 1
-        private const val POSITION_MIDDLE = 2
-        private const val POSITION_BOTTOM = 3
+        const val POSITION_TOP = 1
+        const val POSITION_MIDDLE = 2
+        const val POSITION_BOTTOM = 3
+
+        // Intent extras
+        const val EXTRA_SLIDER_POSITION = "position"
+        const val EXTRA_SLIDER_POSITION_VALUE = "position_value"
+
+        // Mode values
+        const val MODE_TOTAL_SILENCE = 600
+        const val MODE_ALARMS_ONLY = 601
+        const val MODE_PRIORITY_ONLY = 602
+        const val MODE_VIBRATE = 604
+        const val MODE_RING = 605
+        const val MODE_SILENT = 620
 
         // Preference keys
         private const val ALERT_SLIDER_TOP_KEY = "config_top_position"
