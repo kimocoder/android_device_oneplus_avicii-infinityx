@@ -56,11 +56,11 @@ void vendor_load_properties() {
         OverrideProperty("ro.boot.ddr_type", Split(Trim(content), "\t").back().c_str());
     }
     
-    // Infinity-X Properties
-    OverrideProperty("ro.infinity.maintainer", "Sreeshankar K");
-    OverrideProperty("ro.infinity.soc", "Snapdragon 765G 5G");
-    OverrideProperty("ro.infinity.battery", "4115 mAh");
-    OverrideProperty("ro.infinity.display", "1080 x 2400, 90Hz");
-    OverrideProperty("ro.infinity.camera", "48MP + 8MP + 5MP + 2MP");
+    // LineageOS Properties
+    OverrideProperty("ro.lineage.maintainer", "Sreeshankar K");
+    OverrideProperty("ro.lineage.soc", "Snapdragon 765G 5G");
+    OverrideProperty("ro.lineage.battery", "4115 mAh");
+    OverrideProperty("ro.lineage.display", "1080 x 2400, 90Hz");
+    OverrideProperty("ro.lineage.camera", "48MP + 8MP + 5MP + 2MP");
     OverrideProperty("ro.product.marketname", "OnePlus Nord");
 }

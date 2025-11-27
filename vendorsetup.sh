@@ -20,7 +20,7 @@ APPS_DIR="${SRC_DIR}/vendor/oneplus/apps";
 CLANG_TAR="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-${CLANG_VERSION}.tar.gz";
 FW_REPO="https://codeberg.org/sreeshankark/android_vendor_oneplus_firmware";
 KERNEL_REPO="https://github.com/sreeshankark/android_kernel_oneplus_avicii";
-VENDOR_REPO="https://github.com/sreeshankark/android_vendor_oneplus_avicii";
+VENDOR_REPO="https://github.com/kimocoder/android_vendor_oneplus_avicii";
 APPS_REPO="https://bitbucket.org/sreeshankark/android_vendor_oneplus_apps";
 
 # Dependencies
